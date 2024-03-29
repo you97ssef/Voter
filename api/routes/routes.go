@@ -32,7 +32,7 @@ func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middlew
 
 	connected.POST("/votes", c.Vote)
 	api.POST("/guest-votes", c.GuestVote)
-	api.GET("/polls/:id/results", c.Votes)
+	api.GET("/polls/:id", c.Votes)
 	api.GET("/poll-by-code/:code", c.VotesByCode)
 }
 
