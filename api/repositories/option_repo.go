@@ -9,7 +9,7 @@ import (
 type OptionRepo interface {
 	BulkCreate(options []*models.Option) error
 	BulkDelete(pollId int) error
-	GetByPollId(pollId int) ([]*models.Option, error)
+	GetByPolls(polls []*models.Poll) ([]*models.Option, error)
 	GetById(id int) (*models.Option, error)
 	All() ([]*models.Option, error)
 }
@@ -68,12 +68,14 @@ func (r *FakeOptionRepo) BulkDelete(pollId int) error {
 	return nil
 }
 
-func (r *FakeOptionRepo) GetByPollId(pollId int) ([]*models.Option, error) {
+func (r *FakeOptionRepo) GetByPolls(polls []*models.Poll) ([]*models.Option, error) {
 	var options []*models.Option
 
-	for _, option := range r.options {
-		if option.PollId == pollId {
-			options = append(options, option)
+	for _, poll := range polls {
+		for _, option := range r.options {
+			if option.PollId == poll.Id {
+				options = append(options, option)
+			}
 		}
 	}
 
