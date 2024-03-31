@@ -52,10 +52,7 @@ func (ctl *Controller) CreatePoll(c *gin.Context) {
 
 	Ok(
 		c,
-		gin.H{
-			"poll":    poll,
-			"options": options,
-		},
+		poll,
 		"Poll created successfully",
 	)
 }
@@ -70,7 +67,14 @@ func (ctl *Controller) MyPolls(c *gin.Context) {
 		return
 	}
 
-	Ok(c, polls, "")
+	options, err := ctl.Repositories.OptionRepo.GetByPolls(polls)
+
+	if err != nil {
+		Error(c, err, "Error getting options")
+		return
+	}
+
+	Ok(c, gin.H{"polls": polls, "options": options}, "")
 }
 
 func (ctl *Controller) DeletePoll(c *gin.Context) {
@@ -127,5 +131,12 @@ func (ctl *Controller) PublicPolls(c *gin.Context) {
 		return
 	}
 
-	Ok(c, polls, "")
+	options, err := ctl.Repositories.OptionRepo.GetByPolls(polls)
+
+	if err != nil {
+		Error(c, err, "Error getting options")
+		return
+	}
+
+	Ok(c, gin.H{"polls": polls, "options": options}, "")
 }
