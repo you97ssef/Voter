@@ -158,7 +158,14 @@ func (ctl *Controller) Votes(c *gin.Context) {
 		return
 	}
 
-	Ok(c, votes, "")
+	options, err := ctl.Repositories.OptionRepo.GetByPolls([]*models.Poll{poll})
+
+	if err != nil {
+		Error(c, err, "Error getting options")
+		return
+	}
+
+	Ok(c, gin.H{"votes": votes, "poll": poll, "options": options}, "")
 }
 
 func (ctl *Controller) VotesByCode(c *gin.Context) {
@@ -183,5 +190,12 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 		return
 	}
 
-	Ok(c, votes, "")
+	options, err := ctl.Repositories.OptionRepo.GetByPolls([]*models.Poll{poll})
+
+	if err != nil {
+		Error(c, err, "Error getting options")
+		return
+	}
+
+	Ok(c, gin.H{"votes": votes, "poll": poll, "options": options}, "")
 }
