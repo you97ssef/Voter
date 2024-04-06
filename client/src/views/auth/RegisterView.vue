@@ -10,7 +10,6 @@
 
 
     async function register() {
-        console.log(form.value)
         const response = await http.post<OkResponse<string>>('/register', form.value)
 
         connection.setToken(response.data.data)
