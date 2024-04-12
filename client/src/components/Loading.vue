@@ -6,7 +6,7 @@
 
 <template>
     <Transition>
-        <div class="absolute backdrop-blur-sm" v-if="loading.loadings > 0">
+        <div class="fixed backdrop-blur-sm z-50" v-if="loading.loadings > 0">
             <div class="flex justify-center items-center w-screen h-screen">
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
