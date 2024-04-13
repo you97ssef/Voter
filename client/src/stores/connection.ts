@@ -1,10 +1,12 @@
-import { ref, computed, type Ref } from 'vue'
+import { ref, computed, type Ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
 const TOKEN_KEY = 'auth-token'
+const GUEST_USERNAME_KEY = 'guest-username'
 
 export const useConnectionStore = defineStore('connection', () => {
     const token: Ref<null | string> = ref(localStorage.getItem(TOKEN_KEY))
+    const guestUsername = ref<string | null>(localStorage.getItem(GUEST_USERNAME_KEY))
 
     function setToken(newToken: string) {
         token.value = newToken
@@ -29,7 +31,15 @@ export const useConnectionStore = defineStore('connection', () => {
         return null
     })
 
-    return { token, setToken, removeToken, isAuthenticated, user }
+    watch(guestUsername, (newGuestUsername) => {
+        if (newGuestUsername !== '' && newGuestUsername !== null) {
+            localStorage.setItem(GUEST_USERNAME_KEY, newGuestUsername)
+        } else {
+            localStorage.removeItem(GUEST_USERNAME_KEY)
+        }
+    })
+
+    return { token, setToken, removeToken, isAuthenticated, user, guestUsername }
 })
 
 interface User {
