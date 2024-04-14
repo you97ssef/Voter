@@ -3,12 +3,14 @@ import type { Axios } from 'axios';
 import type { OkResponse } from '@/models/response';
 import { useConnectionStore } from '../stores/connection';
 import { inject } from 'vue';
+import router from '@/router';
 
 const http: Axios = inject('http') as Axios
 const connection = useConnectionStore()
 
 function logout() {
     connection.removeToken()
+    router.push({ name: 'home' })
 }
 
 async function resendVerificationEmail() {
@@ -33,12 +35,15 @@ async function resendVerificationEmail() {
             </RouterLink>
         </div>
         <div class="flex gap-2" v-else>
+            <RouterLink class="btn btn-primary btn-square" to="/my-polls">
+                <i class="fa-solid text-lg fa-poll"></i>
+            </RouterLink>
             <button class="btn btn-error btn-square" @click="logout">
                 <i class="fa-solid text-lg fa-arrow-right-from-bracket"></i>
             </button>
         </div>
     </div>
-    <div class="divider font-courgette m-0 mx-4">Hi {{ connection.user?.name ?? 'Guest' }}</div>
+    <div class="divider font-courgette m-0 mx-4">Hi {{ connection.user?.name ?? (connection.guestUsername ?? 'Guest' ) }}</div>
 
     <div class="max-w-screen-md mx-auto p-4" v-if="connection.user?.verified_at === null">
         <div role="alert" class="alert alert-error">
