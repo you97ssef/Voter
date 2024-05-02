@@ -17,6 +17,11 @@ type Routes struct {
 func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middleware) {
 	api := r.Server.Router.Group("", m.TestMiddleware())
 	api.GET("/test", c.Test)
+
+	api.POST("/login", c.Login)
+	api.POST("/register", c.Register)
+	api.GET("/verify", c.Verify)
+	api.GET("/resend-verification", c.ResendVerification)
 }
 
 func (r *Routes) RegisterCors() {
