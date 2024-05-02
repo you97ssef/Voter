@@ -2,14 +2,16 @@ package controllers
 
 import (
 	"net/http"
-	
+
 	"voter/api/core"
+	"voter/api/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
 	Server *core.Server
+	Repositories *repositories.Repositories
 }
 
 func Ok(c *gin.Context, data any, message string) {
