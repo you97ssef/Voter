@@ -1,6 +1,10 @@
 package repositories
 
-import "voter/api/models"
+import (
+	"strconv"
+	"voter/api/core"
+	"voter/api/models"
+)
 
 type UserRepo interface {
 	Save(user *models.User) error
@@ -13,13 +17,50 @@ type FakeUserRepo struct {
 	users []*models.User
 }
 
-func NewFakeUserRepo() *FakeUserRepo {
+func NewFakeUserRepo(count int, server *core.Server) *FakeUserRepo {
+	var users []*models.User
+
+	for i := 0; i < count; i++ {
+		password, err := server.Hasher.HashPassword("password" + strconv.Itoa(i))
+
+		if err != nil {
+			panic(err)
+		}
+
+		users = append(users, &models.User{
+			Id:         i + 1,
+			Name:       "user " + strconv.Itoa(i),
+			Username:   "user" + strconv.Itoa(i),
+			Email:      "user" + strconv.Itoa(i) + "@example.com",
+			VerifiedAt: nil,
+			Password:   password,
+		})
+	}
+
 	return &FakeUserRepo{
+		users: users,
 	}
 }
 
 func (r *FakeUserRepo) Save(user *models.User) error {
-	r.users = append(r.users, user)
+	if user.Id == 0 {
+		var maxId int
+		for _, u := range r.users {
+			if u.Id > maxId {
+				maxId = u.Id
+			}
+		}
+		user.Id = maxId + 1
+		r.users = append(r.users, user)
+	} else {
+		for i, u := range r.users {
+			if u.Id == user.Id {
+				r.users[i] = user
+				break
+			}
+		}
+	}
+
 	return nil
 }
 
