@@ -20,7 +20,7 @@ func (ctl *Controller) Login(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(login.UsernameOrEmail)
 
 	if err != nil {
-		Error(c, err, "")
+		Error(c, err, "Error getting user")
 		return
 	}
 
@@ -34,11 +34,7 @@ func (ctl *Controller) Login(c *gin.Context) {
 		return
 	}
 
-	claims := jwt.MapClaims{
-		"user": user,
-	}
-
-	jwt, err := ctl.Server.Jwt.GenerateToken(claims)
+	jwt, err := ctl.prepareToken(user)
 
 	if err != nil {
 		Error(c, err, "Error generating token")
@@ -46,6 +42,18 @@ func (ctl *Controller) Login(c *gin.Context) {
 	}
 
 	Ok(c, jwt, "")
+}
+
+func (ctl *Controller) prepareToken(user *models.User) (string, error) {
+	claims := jwt.MapClaims{
+		"id": user.Id,
+		"name": user.Name,
+		"username": user.Username,
+		"email": user.Email,
+		"verified_at": user.VerifiedAt,
+	}
+
+	return ctl.Server.Jwt.GenerateToken(claims)
 }
 
 func (ctl *Controller) Register(c *gin.Context) {
@@ -59,7 +67,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(register.Username)
 
 	if err != nil {
-		Error(c, err, "")
+		Error(c, err, "Error checking username")
 		return
 	}
 
@@ -71,7 +79,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	user, err = ctl.Repositories.UserRepo.GetByUsernameOrEmail(register.Email)
 
 	if err != nil {
-		Error(c, err, "")
+		Error(c, err, "Error checking email")
 		return
 	}
 
@@ -108,7 +116,14 @@ func (ctl *Controller) Register(c *gin.Context) {
 		return
 	}
 
-	Created(c, user, "Account created successfully. Check your email to verify your account")
+	token, err := ctl.prepareToken(user)
+	
+	if err != nil {
+		Error(c, err, "Error generating token")
+		return
+	}
+
+	Created(c, token, "Account created successfully. Check your email to verify your account")
 }
 
 func (ctl *Controller) sendVerification(email string) error {
