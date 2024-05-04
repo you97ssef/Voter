@@ -13,6 +13,7 @@ type PollRepo interface {
 	GetPublic() ([]*models.Poll, error)
 	GetById(id int) (*models.Poll, error)
 	Delete(id int) error
+	GetByCode(code string) (*models.Poll, error)
 }
 
 type FakePollRepo struct {
@@ -112,6 +113,15 @@ func (r *FakePollRepo) Delete(id int) error {
 func (r *FakePollRepo) GetById(id int) (*models.Poll, error) {
 	for _, p := range r.polls {
 		if p.Id == id {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
+func (r *FakePollRepo) GetByCode(code string) (*models.Poll, error) {
+	for _, p := range r.polls {
+		if p.PrivateCode != nil && *p.PrivateCode == code {
 			return p, nil
 		}
 	}

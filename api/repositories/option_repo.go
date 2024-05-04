@@ -10,6 +10,8 @@ type OptionRepo interface {
 	BulkCreate(options []*models.Option) error
 	BulkDelete(pollId int) error
 	GetByPollId(pollId int) ([]*models.Option, error)
+	GetById(id int) (*models.Option, error)
+	All() ([]*models.Option, error)
 }
 
 type FakeOptionRepo struct {
@@ -51,10 +53,16 @@ func (r *FakeOptionRepo) BulkCreate(options []*models.Option) error {
 }
 
 func (r *FakeOptionRepo) BulkDelete(pollId int) error {
+	indexesToDelete := []int{}
+
 	for i, option := range r.options {
 		if option.PollId == pollId {
-			r.options = append(r.options[:i], r.options[i+1:]...)
+			indexesToDelete = append(indexesToDelete, i)
 		}
+	}
+
+	for i := len(indexesToDelete) - 1; i >= 0; i-- {
+		r.options = append(r.options[:indexesToDelete[i]], r.options[indexesToDelete[i]+1:]...)
 	}
 
 	return nil
@@ -70,4 +78,18 @@ func (r *FakeOptionRepo) GetByPollId(pollId int) ([]*models.Option, error) {
 	}
 
 	return options, nil
+}
+
+func (r *FakeOptionRepo) GetById(id int) (*models.Option, error) {
+	for _, option := range r.options {
+		if option.Id == id {
+			return option, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (r *FakeOptionRepo) All() ([]*models.Option, error) {
+	return r.options, nil
 }
