@@ -17,7 +17,7 @@ type Routes struct {
 func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middleware) {
 	api := r.Server.Router.Group("")
 	connected := api.Group("", m.Connected())
-	
+
 	api.GET("/test", c.Test)
 
 	api.POST("/login", c.Login)
@@ -25,10 +25,15 @@ func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middlew
 	api.GET("/verify", c.Verify)
 	api.GET("/resend-verification", c.ResendVerification)
 
-	connected.POST("/poll", c.CreatePoll)
+	connected.POST("/polls", c.CreatePoll)
 	connected.GET("/my-polls", c.MyPolls)
 	api.GET("/public-polls", c.PublicPolls)
-	connected.DELETE("/poll/:id", c.DeletePoll)
+	connected.DELETE("/polls/:id", c.DeletePoll)
+
+	connected.POST("/votes", c.Vote)
+	api.POST("/guest-votes", c.GuestVote)
+	api.GET("/polls/:id/results", c.Votes)
+	api.GET("/poll-by-code/:code", c.VotesByCode)
 }
 
 func (r *Routes) RegisterCors() {
