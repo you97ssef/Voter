@@ -31,5 +31,7 @@ func main() {
 	routes.RegisterCors()
 	routes.RegisterRoutes(controllers, middleware)
 
+	server.SetGlobal("frontend_url", "http://localhost:5173")
+
 	server.Run()
 }

@@ -43,6 +43,7 @@ func (s *Server) SetGlobal(key string, value interface{}) {
 }
 
 func configGin() {
+	gin.SetMode(gin.ReleaseMode)
 }
 
 func setupLocation() {
@@ -112,4 +113,3 @@ func checkFile(s *Server, file string) error {
 
 	return nil
 }
-
