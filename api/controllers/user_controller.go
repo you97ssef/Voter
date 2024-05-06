@@ -41,7 +41,7 @@ func (ctl *Controller) Login(c *gin.Context) {
 		return
 	}
 
-	Ok(c, jwt, "")
+	Ok(c, jwt, "Logged in successfully")
 }
 
 func (ctl *Controller) prepareToken(user *models.User) (string, error) {
@@ -139,10 +139,14 @@ func (ctl *Controller) sendVerification(email string) error {
 		return err
 	}
 
+	frontEnd := ctl.Server.Globals["frontend_url"].(string)
+
+	link := frontEnd + "/verify?token=" + token
+
 	return ctl.Server.Mailer.SendEmail(
 		to,
 		"Verify your email",
-		"Click the link below to verify your email: http://localhost:"+ctl.Server.Config.Port+"/verify?token="+token,
+		"Click the link below to verify your email: <a href='" + link + "'>" + link + "</a>",
 	)
 }
 
@@ -170,7 +174,8 @@ func (ctl *Controller) Verify(c *gin.Context) {
 		return
 	}
 
-	user.VerifiedAt = &time.Time{}
+	now := time.Now()
+	user.VerifiedAt = &now
 
 	err = ctl.Repositories.UserRepo.Save(user)
 
@@ -179,7 +184,14 @@ func (ctl *Controller) Verify(c *gin.Context) {
 		return
 	}
 
-	Ok(c, nil, "Email verified successfully")
+	newToken, err := ctl.prepareToken(user)
+
+	if err != nil {
+		Error(c, err, "Error generating token")
+		return
+	}
+
+	Ok(c, newToken, "Email verified successfully")
 }
 
 func (ctl *Controller) ResendVerification(c *gin.Context) {
