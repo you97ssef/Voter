@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'abeezee';
+    src: url('./fonts/abeezee.ttf');
+}
+
+@font-face {
+    font-family: 'lobster-two';
+    src: url('./fonts/lobster-two.ttf');
+}
+
+@font-face {
+    font-family: 'courgette';
+    src: url('./fonts/courgette.ttf');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
