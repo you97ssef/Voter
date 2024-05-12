@@ -1,90 +1,88 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{vue,ts}",
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["abeezee", "sans-serif"],
-        lobster: ["lobster-two", "sans-serif"],
-        courgette: ["courgette", "sans-serif"],
-      },
+    content: ['./index.html', './src/**/*.{vue,ts}'],
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ['abeezee', 'sans-serif'],
+                lobster: ['lobster-two', 'sans-serif'],
+                courgette: ['courgette', 'sans-serif']
+            }
+        }
     },
-  },
-  daisyui: {
-    themes: [
-      {
-        darko: {
-          primary: "#66347F",
-          "primary-content": "#0C060E",
-          secondary: "#0D7377",
-          "secondary-content": "#021212",
-          accent: "#37306B",
-          "accent-content": "#07060e",
-          neutral: "#181611",
-          "base-100": "#2B283E",
-          "base-200": "#222032",
-          "base-300": "#191825",
-          info: "#3876BF",
-          "info-content": "#0D1929",
-          success: "#00f08c",
-          "success-content": "#002918",
-          warning: "#ffa600",
-          "warning-content": "#3D2800",
-          error: "#ff0037",
-          "error-content": "#290008",
+    daisyui: {
+        themes: [
+            {
+                darko: {
+                    primary: '#F5F5F5',
+                    'primary-content': '#0A0A0A',
+                    secondary: '#A3A3A3',
+                    'secondary-content': '#0A0A0A',
+                    accent: '#474747',
+                    'accent-content': '#F5F5F5',
 
-          "--rounded-box": "1.5rem",
-          "--rounded-btn": "1rem",
-          "--rounded-badge": "2rem",
+                    neutral: '#141414',
 
-          "--animation-btn": ".25s",
-          "--animation-input": ".2s",
+                    'base-100': '#181818',
+                    'base-200': '#101010',
+                    'base-300': '#000000',
+                    
+                    info: '#3876BF',
+                    'info-content': '#050A10',
+                    success: '#00f08c',
+                    'success-content': '#00140C',
+                    warning: '#ffa600',
+                    'warning-content': '#140D00',
+                    error: '#ff0037',
+                    'error-content': '#140004',
 
-          "--btn-text-case": "uppercase",
-          "--navbar-padding": "1rem",
-          "--border-btn": "2px",
-        },
-      },
-      {
-        lighto: {
-          primary: "#66347F",
-          "primary-content": "#EDE2F3",
-          secondary: "#0D7377",
-          "secondary-content": "#DAF9FB",
-          accent: "#37306B",
-          "accent-content": "#E5E2F3",
-          neutral: "#F7F6F3",
-          "base-100": "#F3F3F7",
-          "base-200": "#E7E7EF",
-          "base-300": "#DADAE7",
-          info: "#3876BF",
-          "info-content": "#EFF4FA",
-          success: "#00f08c",
-          "success-content": "#EBFFF7",
-          warning: "#ffa600",
-          "warning-content": "#FFF8EB",
-          error: "#ff0037",
-          "error-content": "#FFEBEF",
+                    '--rounded-box': '1.5rem',
+                    '--rounded-btn': '1rem',
+                    '--rounded-badge': '2rem',
 
-          "--rounded-box": "1.5rem",
-          "--rounded-btn": "1rem",
-          "--rounded-badge": "2rem",
+                    '--animation-btn': '.25s',
+                    '--animation-input': '.2s',
 
-          "--animation-btn": ".25s",
-          "--animation-input": ".2s",
+                    '--btn-text-case': 'uppercase',
+                    '--navbar-padding': '1rem',
+                    '--border-btn': '2px'
+                }, 
+                lighto: {
+                    primary: '#0A0A0A',
+                    'primary-content': '#F5F5F5',
+                    secondary: '#1F1F1F',
+                    'secondary-content': '#F5F5F5',
+                    accent: '#707070',
+                    'accent-content': '#0A0A0A',
 
-          "--btn-text-case": "uppercase",
-          "--navbar-padding": "1rem",
-          "--border-btn": "2px",
-        },
-      },
-    ],
-  },
-  plugins: [
-    require('daisyui'),
-  ],
+                    neutral: '#F5F5F5',
+
+                    'base-100': '#D6D6D6',
+                    'base-200': '#EBEBEB',
+                    'base-300': '#FFFFFF',
+                    
+                    info: '#29588e',
+                    'info-content': '#F5F5F5',
+                    success: '#008F53',
+                    'success-content': '#F5F5F5',
+                    warning: '#8f5d00',
+                    'warning-content': '#F5F5F5',
+                    error: '#A30023',
+                    'error-content': '#F5F5F5',
+
+                    '--rounded-box': '1.5rem',
+                    '--rounded-btn': '1rem',
+                    '--rounded-badge': '2rem',
+
+                    '--animation-btn': '.25s',
+                    '--animation-input': '.2s',
+
+                    '--btn-text-case': 'uppercase',
+                    '--navbar-padding': '1rem',
+                    '--border-btn': '2px'
+                }
+            }
+        ]
+    },
+    plugins: [require('daisyui')]
 }
-

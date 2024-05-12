@@ -2,7 +2,7 @@ import { useConnectionStore } from '@/stores/connection'
 import { useLoadingStore } from '@/stores/loading'
 import { useToastStore } from '@/stores/toast'
 import axios from 'axios'
-import type { App } from 'vue'
+import { watch, type App } from 'vue'
 
 export default {
     install: (app: App, url: string) => {
@@ -15,6 +15,10 @@ export default {
             headers: {
                 Authorization: connection.isAuthenticated ? `Bearer ${connection.token}` : '',
             },
+        })
+
+        watch(() => connection.token, (newToken) => {
+            http.defaults.headers.Authorization = newToken ? `Bearer ${newToken}` : ''
         })
 
         http.interceptors.request.use(

@@ -30,7 +30,6 @@
                 `${window.location.origin}/polls/${results.value.poll.id}` : 
                 `${window.location.origin}/poll-by-code/${results.value.poll.private_code}`
         } catch (error) {
-            console.error(error)
             router.push({ name: 'not-found' })
         }
     })
@@ -97,43 +96,43 @@
 
 <template>
     <div v-if="results">
-        <div class="text-center mb-4">
-            <p class="text-sm">Description</p>
-            <h1 class="text-6xl mb-2 font-bold">{{ results.poll.description }}</h1>
-            <p class="text-sm"><i class="fa-solid fa-users"></i> {{ results.count }} Voters</p>
-            <button class="btn btn-error mt-2" @click="deletePoll" v-if="connection.isAuthenticated && results.poll.user_id === connection.user.id">
-                <i class="fa-solid fa-trash"></i>
-                Delete Poll
-            </button>
-        </div>
-        <div class="flex flex-wrap justify-center items-center gap-2 mb-5">
-            <div class="card card-compact bg-secondary text-secondary-content">
-                <div class="card-body flex-row justify-between items-center">
-                    <div class="flex justify-center items-center font-bold gap-2"> 
-                        <i class="fa-solid fa-link"></i>
-                        {{ shareLink }}
+        <div class="flex flex-wrap items-center justify-evenly gap-4 my-16">
+            <div class="text-center">
+                <h1 class="text-6xl mb-2 font-bold">{{ results.poll.description }}</h1>
+                <p class="text-sm"><i class="fa-solid fa-users"></i> {{ results.count }} Voters</p>
+                <button class="btn btn-error mt-2" @click="deletePoll" v-if="connection.isAuthenticated && results.poll.user_id === connection.user.id">
+                    <i class="fa-solid fa-trash"></i>
+                    Delete Poll
+                </button>
+            </div>
+            <div class="flex flex-col gap-2">
+                <div class="card card-compact bg-primary text-secondary-content">
+                    <div class="card-body flex-row justify-between items-center">
+                        <div class="flex justify-center items-center font-bold gap-2"> 
+                            <i class="fa-solid fa-link"></i>
+                            {{ shareLink }}
+                        </div>
+                        <div class="btn btn-sm btn-accent" @click="copyToClipboard">
+                            Share
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </div>
                     </div>
-                    <div class="btn btn-sm btn-primary" @click="copyToClipboard">
-                        Share
-                        <i class="fa-solid fa-share-nodes"></i>
-                    </div>
+                </div>
+                <div class="flex justify-center mb-2" v-if="!connection.isAuthenticated">
+                    <label class="input input-bordered flex items-center gap-2">
+                        <i class="fa-solid fa-person-circle-question opacity-70"></i>
+                        <input type="text" class="grow" placeholder="Your name to vote" v-model="connection.guestUsername" />
+                    </label>
                 </div>
             </div>
         </div>
-        <p class="text-center text-sm mb-2">Options</p>
-        
-        <div class="flex justify-center mb-2" v-if="!connection.isAuthenticated">
-            <label class="input input-bordered input-sm flex items-center gap-2">
-                <i class="fa-solid fa-person-circle-question opacity-70"></i>
-                <input type="text" class="grow" placeholder="Your name to vote" v-model="connection.guestUsername" />
-            </label>
-        </div>
-    
-        <div class="flex flex-wrap justify-center items-center gap-2 mb-5">
+        <p class="text-center text-sm mb-4">Options</p>
+        <div class="flex flex-wrap justify-center items-center gap-2 mb-16">
             <div class="card w-80 bg-primary text-primary-content" v-for="option in results.options" :key="option.details.id">
                 <div class="card-body justify-center items-center">
                     <p>{{ option.details.description }}</p>
                     <div class="radial-progress bg-base-100 text-base-content border-4 border-base-100" :style="'--value:' + option.percentage + ';'" role="progressbar">{{ option.percentage }} %</div>
+                    <p>Count: {{ option.count }}</p>
                     <button class="btn btn-sm btn-success" v-if="!alreadyVoted" @click="vote(option.details.id)">
                         <i class="fa-solid fa-vote-yea"></i>
                         Vote
@@ -141,7 +140,7 @@
                 </div>
             </div>    
         </div>
-        <p class="text-center text-sm mb-2">Votes</p>
+        <p class="text-center text-sm mb-4">Votes</p>
         <div class="flex justify-center flex-wrap gap-5" v-if="results.votes.length === 0">
             <div class="my-2">
                 <img src="@/assets/illustrations/empty.svg" class="max-w-64 w-full" />
@@ -150,21 +149,19 @@
                 </div>
             </div>
         </div>
-        <div class="carousel carousel-center max-w-full space-x-4 rounded-box">
-            <div class="carousel-item" v-for="vote in results.votes" :key="vote.id">
-                <div class="card bg-base-200 text-base-content w-64">
-                    <div class="card-body justify-center">
-                        <div>
-                            <p class="text-xs">Voter</p>
-                            <p class="text-xl font-bold">
-                                <span>{{ vote.guest ?? vote.user_id }}</span>
-                                <span v-if="vote.guest"> (guest)</span>
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs">Option</p>
-                            <h3 class="text-xl font-bold">{{ vote.option_id }}</h3>
-                        </div>
+        <div class="flex flex-wrap justify-center gap-4">
+            <div class="card bg-base-200 text-base-content flex-none w-64" v-for="vote in results.votes" :key="vote.id">
+                <div class="card-body justify-center">
+                    <div>
+                        <p class="text-xs">Voter</p>
+                        <p class="text-xl font-bold">
+                            <span>{{ vote.guest ?? vote.user_id }}</span>
+                            <span v-if="vote.guest"> (guest)</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs">Option</p>
+                        <h3 class="text-xl font-bold">{{ vote.option_id }}</h3>
                     </div>
                 </div>
             </div>

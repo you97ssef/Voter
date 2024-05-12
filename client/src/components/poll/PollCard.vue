@@ -9,7 +9,7 @@
 
 <template>
     <div class="card w-80 bg-primary text-primary-content">
-        <div class="card-body">
+        <div class="card-body justify-between">
             <div class="pb-3">
                 <p class="text-sm">
                     Description
@@ -20,17 +20,21 @@
             </div>
             <div>
                 <p class="text-sm">Options</p>
-                <div class="overflow-hidden">
-                    <div class="carousel carousel-center rounded-box gap-2 w-64">
-                        <div class="carousel-item badge badge-outline border-2 font-bold" v-for="option in poll.options" :key="option.id">
-                            {{ option.description }}
-                        </div>
+                <div class="flex flex-wrap gap-2">
+                    <div class="badge badge-outline border-2 font-bold flex-none" v-for="option in poll.options" :key="option.id">
+                        {{ option.description }}
                     </div>
                 </div>
             </div>
             <div class="card-actions justify-end">
-                <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn">Show poll</RouterLink>
-                <RouterLink v-else :to="{ name: 'poll', params: { id: poll.id }}" class="btn">Show poll</RouterLink>
+                <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn btn-accent">
+                    <i class="fa-solid fa-check-to-slot text-lg"></i>    
+                    Show poll
+                </RouterLink>
+                <RouterLink v-else :to="{ name: 'poll', params: { id: poll.id }}" class="btn btn-accent">
+                    <i class="fa-solid fa-check-to-slot text-lg"></i>    
+                    Show poll
+                </RouterLink>
             </div>
         </div>
     </div>

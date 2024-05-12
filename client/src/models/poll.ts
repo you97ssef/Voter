@@ -38,6 +38,7 @@ export interface Results {
     options: {
         details: Option;
         percentage: number;
+        count: number;
     }[];
     votes: Vote[];
 }
@@ -49,9 +50,12 @@ export function buildResults(poll: PollResults): Results {
     
     const count = poll.votes.length;
     const options = poll.options.map(option => {
+        const voteCount = poll.votes.filter(vote => vote.option_id === option.id).length;
+
         return {
             details: option,
-            percentage: Math.round((poll.votes.filter(vote => vote.option_id === option.id).length / count) * 100) || 0,
+            percentage: Math.round((voteCount / count) * 100) || 0,
+            count: voteCount
         };
     });
     return {
@@ -66,9 +70,12 @@ export function addVote(results: Results, vote: Vote): Results {
     results.votes.push(vote);
     results.count++;
     results.options = results.options.map(option => {
+        const voteCount = results.votes.filter(vote => vote.option_id === option.details.id).length;
+        
+        option.count = voteCount;
         return {
             ...option,
-            percentage: Math.round((results.votes.filter(vote => vote.option_id === option.details.id).length / results.count) * 100) || 0,
+            percentage: Math.round((voteCount / results.count) * 100) || 0,
         };
     });
     return results;
