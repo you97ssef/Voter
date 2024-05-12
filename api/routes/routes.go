@@ -17,6 +17,7 @@ type Routes struct {
 func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middleware) {
 	api := r.Server.Router.Group("")
 	connected := api.Group("", m.Connected())
+	verified := api.Group("", m.Verified())
 
 	api.GET("/test", c.Test)
 
@@ -25,7 +26,7 @@ func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middlew
 	api.GET("/verify", c.Verify)
 	api.GET("/resend-verification", c.ResendVerification)
 
-	connected.POST("/polls", c.CreatePoll)
+	verified.POST("/polls", c.CreatePoll)
 	connected.GET("/my-polls", c.MyPolls)
 	api.GET("/public-polls", c.PublicPolls)
 	connected.DELETE("/polls/:id", c.DeletePoll)

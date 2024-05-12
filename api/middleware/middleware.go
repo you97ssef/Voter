@@ -25,3 +25,28 @@ func (m *Middleware) Connected() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func (m *Middleware) Verified() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims, err := m.Server.Jwt.VerifyTokenFromGinContext(c)
+
+		if err != nil {
+			controllers.Unauthorized(c, "Token not provided or invalid")
+			return
+		}
+
+		verifiedAt := m.Server.Jwt.GetValue(claims, "verified_at")
+
+		m.Server.Logger.Info(verifiedAt)
+		m.Server.Logger.Info(claims)
+
+		if verifiedAt == nil {
+			controllers.Unauthorized(c, "Your account is not verified, please verify it first")
+			return
+		}
+
+		c.Set("claims", claims)
+
+		c.Next()
+	}
+}
