@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, onMounted, inject } from 'vue'
+    import { ref, onMounted, inject, onUnmounted, computed } from 'vue'
     import { addVote, buildResults, type Poll, type PollResults, type Results } from '@/models/poll'
     import type { Axios } from 'axios'
     import { useRoute } from 'vue-router'
@@ -9,52 +9,65 @@
     import { useConnectionStore } from '@/stores/connection';
     import { buildValidations, type NewGuestVote, type NewVote, type ValidatedVote, type Vote } from '@/models/vote';
     import VoteCard from '@/components/vote/VoteCard.vue';
+    import type { LiveService } from '@/services/live-service';
 
     const http: Axios = inject('http') as Axios
     const route = useRoute()
     const toastStore = useToastStore()
     const connection = useConnectionStore()
+    const live = inject('live') as LiveService
 
     const results = ref<Results>()
     const shareLink = ref<string>('')
 
-    const alreadyVoted = ref(false)
+    const alreadyVoted = computed(() => {
+        return connection.isAuthenticated ? 
+            results.value!.votes.some(v => v.user_id === connection.user.id) : 
+            connection.guestUsername ? 
+                results.value!.votes.some(v => v.guest === connection.guestUsername) : 
+                false    
+    })
 
     onMounted(async () => {
         try {
-            const response = route.params.id ?
-                await http.get<OkResponse<PollResults>>(`/polls/${route.params.id}`) :
-            await http.get<OkResponse<PollResults>>(`/poll-by-code/${route.params.code}`)
-            results.value = buildResults(response.data.data)
-            checkIfAlreadyVoted()
-            shareLink.value = results.value.poll.private_code === null ? 
-                `${window.location.origin}/polls/${results.value.poll.id}` : 
-                `${window.location.origin}/poll-by-code/${results.value.poll.private_code}`
+            await getPoll()
+            buildShareLink()
+            subscribeToVotes()
         } catch (error) {
             router.push({ name: 'not-found' })
         }
     })
 
+    async function getPoll() {
+        const response = route.params.id ?
+                await http.get<OkResponse<PollResults>>(`/polls/${route.params.id}`) :
+            await http.get<OkResponse<PollResults>>(`/poll-by-code/${route.params.code}`)
+            results.value = buildResults(response.data.data)
+    }
+
+    function buildShareLink() {
+        shareLink.value = results.value!.poll.private_code === null ? 
+            `${window.location.origin}/polls/${results.value!.poll.id}` : 
+            `${window.location.origin}/poll-by-code/${results.value!.poll.private_code}`
+    }
+
+    function subscribeToVotes() {
+        live.connect()
+        live.subscribe(`poll-${results.value!.poll.id}`, (message: string) => {
+            try {
+                const vote = JSON.parse(message) as Vote
+                results.value = addVote(results.value!, vote)
+                validated.value = false
+                toastStore.addToast('New vote received! Check its validity', 'success')
+            } catch (error) {
+                toastStore.addToast('Error receiving new vote', 'error')
+            }
+        })
+    }
+
     function copyToClipboard() {
         navigator.clipboard.writeText(shareLink.value)
         toastStore.addToast('Link copied to clipboard', 'success')
-    }
-
-    function checkIfAlreadyVoted() {
-        if (!connection.isAuthenticated) {
-            if (!connection.guestUsername) {
-                return
-            }
-            const guest = results.value!.votes.find(v => v.guest === connection.guestUsername)
-            if (guest) {
-                alreadyVoted.value = true
-            }
-        } else {
-            const user = results.value!.votes.find(v => v.user_id === connection.user.id)
-            if (user) {
-                alreadyVoted.value = true
-            }
-        }
     }
 
     async function vote(option: number) {
@@ -67,8 +80,8 @@
     
             const response = await http.post<OkResponse<Vote>>('/votes', vote)
             results.value = addVote(results.value!, response.data.data)
-            alreadyVoted.value = true
             validated.value = false
+            publishVote(response.data.data)
         } else {
             if (!connection.guestUsername) {
                 toastStore.addToast('Please enter your name to vote', 'error')
@@ -84,9 +97,18 @@
 
             const response = await http.post<OkResponse<Vote>>('/guest-votes', guestVote)
             results.value = addVote(results.value!, response.data.data)
-            alreadyVoted.value = true
             validated.value = false
+            publishVote(response.data.data)
         }
+    }
+
+    onUnmounted(() => {
+        live.unsubscribe(`poll-${results.value!.poll.id}`)
+        live.disconnect()
+    })
+
+    function publishVote(vote: Vote) {
+        live.publish(`poll-${results.value!.poll.id}`, JSON.stringify(vote))
     }
 
     function deletePoll() {
@@ -119,7 +141,10 @@
     <div v-if="results">
         <div class="flex flex-wrap items-center justify-evenly gap-4 my-16">
             <div class="text-center">
-                <h1 class="text-6xl mb-2 font-bold">{{ results.poll.description }}</h1>
+                <h1 class="text-6xl mb-2 font-bold">
+                    {{ results.poll.description }}
+                    <span class="loading loading-ring loading-lg text-error"></span>
+                </h1>
                 <p class="text-xs" v-if="results.poll.finished_at !== null">Closed {{ new Date(results.poll.finished_at).toLocaleString() }}</p>
                 <p class="text-sm"><i class="fa-solid fa-users"></i> {{ results.count }} Voters</p>
                 <button class="btn btn-error m-1" @click="closePoll" v-if="connection.isAuthenticated && results.poll.user_id === connection.user.id && results.poll.finished_at === null">
