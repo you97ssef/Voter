@@ -37,9 +37,6 @@ func (m *Middleware) Verified() gin.HandlerFunc {
 
 		verifiedAt := m.Server.Jwt.GetValue(claims, "verified_at")
 
-		m.Server.Logger.Info(verifiedAt)
-		m.Server.Logger.Info(claims)
-
 		if verifiedAt == nil {
 			controllers.Unauthorized(c, "Your account is not verified, please verify it first")
 			return

@@ -30,11 +30,14 @@ func (r *Routes) RegisterRoutes(c *controllers.Controller, m *middleware.Middlew
 	connected.GET("/my-polls", c.MyPolls)
 	api.GET("/public-polls", c.PublicPolls)
 	connected.DELETE("/polls/:id", c.DeletePoll)
+	connected.PUT("/polls/:id", c.FinishPoll)
 
 	connected.POST("/votes", c.Vote)
 	api.POST("/guest-votes", c.GuestVote)
 	api.GET("/polls/:id", c.Votes)
 	api.GET("/poll-by-code/:code", c.VotesByCode)
+	api.GET("/validate-poll/:id", c.ValidateVotes)
+	api.GET("/validate-poll-by-code/:code", c.ValidateVotesByCode)
 }
 
 func (r *Routes) RegisterCors() {

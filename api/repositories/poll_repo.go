@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"strconv"
+	"time"
 	"voter/api/core/utils"
 	"voter/api/models"
 )
@@ -31,11 +32,18 @@ func NewFakePollRepo(count, users int) *FakePollRepo {
 			privateCode = &code
 		}
 
+		var finishedAt *time.Time
+		if utils.RandomBool() {
+			finished := utils.RandomDate(time.Now().AddDate(-5, 0, 0), time.Now())
+			finishedAt = &finished
+		}
+
 		polls = append(polls, &models.Poll{
 			Id:          i + 1,
 			Description: "poll " + strconv.Itoa(i),
 			Creator:     utils.RandomInt(1, users),
 			PrivateCode: privateCode,
+			FinishedAt:  finishedAt,
 		})
 	}
 

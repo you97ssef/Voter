@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"time"
 	"voter/api/core/utils"
 	"voter/api/dtos"
 	"voter/api/models"
@@ -139,4 +140,46 @@ func (ctl *Controller) PublicPolls(c *gin.Context) {
 	}
 
 	Ok(c, gin.H{"polls": polls, "options": options}, "")
+}
+
+func (ctl *Controller) FinishPoll(c *gin.Context) {
+	var id = c.Param("id")
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		BadRequest(c, "Invalid poll id")
+		return
+	}
+
+	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
+
+	if err != nil {
+		Error(c, err, "Error getting poll")
+		return
+	}
+
+	if poll == nil {
+		NotFound(c, "Poll not found")
+		return
+	}
+
+	var userId = ctl.Server.Jwt.GetValue(c.MustGet("claims").(jwt.MapClaims), "id").(float64)
+
+	if int(userId) != poll.Creator {
+		Forbidden(c, "You are not the creator of this poll")
+		return
+	}
+	
+	now := time.Now()
+	poll.FinishedAt = &now
+
+	err = ctl.Repositories.PollRepo.Save(poll)
+	
+	if err != nil {
+		Error(c, err, "Error finishing poll")
+		return
+	}
+
+	Ok(c, poll, "Poll finished successfully")
 }
