@@ -10,6 +10,7 @@ type VoteRepo interface {
 	GetByPoll(pollId int) ([]*models.Vote, error)
 	AlreadyVoted(pollId int, userId int) (bool, error)
 	AlreadyVotedGuest(pollId int, guest string) (bool, error)
+	GetLastVote(pollId int) (*models.Vote, error)
 }
 
 type FakeVoteRepo struct {
@@ -32,13 +33,24 @@ func NewFakeVoteRepo(count, users int, options []*models.Option) *FakeVoteRepo {
 
 		option := options[utils.RandomInt(0, len(options)-1)]
 
-		votes = append(votes, &models.Vote{
+		vote := &models.Vote{
 			Id:       i + 1,
 			UserId:   userId,
 			OptionId: option.Id,
 			PollId:   option.PollId,
 			Guest:    guest,
-		})
+		}
+
+		var prevVote *models.Vote = &models.Vote{}
+
+		for _, v := range votes {
+			if v.PollId == vote.PollId && v.Id > prevVote.Id {
+				prevVote = v
+			}
+		}
+
+		vote.CompleteVote(prevVote)
+		votes = append(votes, vote)
 	}
 
 	return &FakeVoteRepo{
@@ -98,4 +110,18 @@ func (r *FakeVoteRepo) AlreadyVotedGuest(pollId int, guest string) (bool, error)
 	}
 
 	return false, nil
+}
+
+func (r *FakeVoteRepo) GetLastVote(pollId int) (*models.Vote, error) {
+	var lastVote *models.Vote
+
+	for _, vote := range r.votes {
+		if vote.PollId == pollId {
+			if lastVote == nil || vote.Id > lastVote.Id {
+				lastVote = vote
+			}
+		}
+	}
+
+	return lastVote, nil
 }

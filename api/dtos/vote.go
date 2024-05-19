@@ -12,3 +12,8 @@ type NewGuestVoteDTO struct {
 	Guest    string  `json:"guest" binding:"required"`
 	PollCode *string `json:"poll_code"`
 }
+
+type VoteValidation struct {
+	Valid bool `json:"valid"`
+	Id    int  `json:"id"`
+}

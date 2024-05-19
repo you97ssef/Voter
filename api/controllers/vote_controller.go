@@ -24,7 +24,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 		return
 	}
 
-	if poll == nil || (poll.PrivateCode != nil && (newVote.PollCode == nil || *poll.PrivateCode != *newVote.PollCode)) {
+	if poll == nil || poll.FinishedAt != nil || (poll.PrivateCode != nil && (newVote.PollCode == nil || *poll.PrivateCode != *newVote.PollCode)) {
 		BadRequest(c, "Invalid poll")
 		return
 	}
@@ -59,6 +59,19 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 		Guest:    &newVote.Guest,
 	}
 
+	previousVote, err := ctl.Repositories.VoteRepo.GetLastVote(poll.Id)
+
+	if err != nil {
+		Error(c, err, "Error getting last vote")
+		return
+	}
+
+	if previousVote == nil {
+		previousVote = &models.Vote{}
+	}
+
+	vote.CompleteVote(previousVote)
+
 	if err := ctl.Repositories.VoteRepo.Save(vote); err != nil {
 		Error(c, err, "Error saving vote")
 		return
@@ -82,7 +95,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 		return
 	}
 
-	if poll == nil || (poll.PrivateCode != nil && (newVote.PollCode == nil || *poll.PrivateCode != *newVote.PollCode)) {
+	if poll == nil || poll.FinishedAt != nil || (poll.PrivateCode != nil && (newVote.PollCode == nil || *poll.PrivateCode != *newVote.PollCode)) {
 		BadRequest(c, "Invalid poll")
 		return
 	}
@@ -120,6 +133,19 @@ func (ctl *Controller) Vote(c *gin.Context) {
 
 	vote.UserId = new(int)
 	*vote.UserId = int(userId)
+
+	previousVote, err := ctl.Repositories.VoteRepo.GetLastVote(poll.Id)
+
+	if err != nil {
+		Error(c, err, "Error getting last vote")
+		return
+	}
+
+	if previousVote == nil {
+		previousVote = &models.Vote{}
+	}
+
+	vote.CompleteVote(previousVote)
 
 	if err := ctl.Repositories.VoteRepo.Save(vote); err != nil {
 		Error(c, err, "Error saving vote")
@@ -198,4 +224,89 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 	}
 
 	Ok(c, gin.H{"votes": votes, "poll": poll, "options": options}, "")
+}
+
+func (ctl *Controller) ValidateVotes(c *gin.Context) {
+	var id = c.Param("id")
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		BadRequest(c, "Invalid poll id")
+		return
+	}
+
+	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
+
+	if err != nil {
+		Error(c, err, "Error getting poll")
+		return
+	}
+
+	if poll == nil {
+		BadRequest(c, "Invalid poll")
+		return
+	}
+
+	votes, err := ctl.Repositories.VoteRepo.GetByPoll(idInt)
+
+	if err != nil {
+		Error(c, err, "Error getting votes")
+		return
+	}
+
+	var votesValidation = []dtos.VoteValidation{}
+
+	for index, vote := range votes {
+		var prevVote *models.Vote = &models.Vote{}
+
+		if index > 0 {
+			prevVote = votes[index - 1]
+		}
+
+		var valid = vote.IsVoteValid(prevVote)
+
+		votesValidation = append(votesValidation, dtos.VoteValidation{Valid: valid, Id: vote.Id})
+	}
+
+	Ok(c, votesValidation, "")
+}
+
+func (ctl *Controller) ValidateVotesByCode(c *gin.Context) {
+	var code = c.Param("code")
+
+	poll, err := ctl.Repositories.PollRepo.GetByPrivateCode(code)
+
+	if err != nil {
+		Error(c, err, "Error getting poll")
+		return
+	}
+
+	if poll == nil {
+		BadRequest(c, "Invalid poll code")
+		return
+	}
+
+	votes, err := ctl.Repositories.VoteRepo.GetByPoll(poll.Id)
+
+	if err != nil {
+		Error(c, err, "Error getting votes")
+		return
+	}
+
+	var votesValidation = []dtos.VoteValidation{}
+
+	for index, vote := range votes {
+		var prevVote *models.Vote = &models.Vote{}
+
+		if index > 0 {
+			prevVote = votes[index - 1]
+		}
+
+		var valid = vote.IsVoteValid(prevVote)
+
+		votesValidation = append(votesValidation, dtos.VoteValidation{Valid: valid, Id: vote.Id})
+	}
+
+	Ok(c, votesValidation, "")
 }
