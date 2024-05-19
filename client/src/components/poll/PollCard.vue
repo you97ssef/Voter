@@ -30,6 +30,10 @@
                 <p class="text-sm">Finished</p>
                 <h3 class="text-xl font-bold">{{ new Date(poll.finished_at).toLocaleString() }}</h3>
             </div>
+            <div v-else>
+                <p class="text-sm">Live</p>
+                <span class="loading loading-ring loading-lg text-error"></span>
+            </div>
 
             <div class="card-actions justify-end">
                 <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn btn-accent">

@@ -12,7 +12,7 @@
         <div class="mt-10 text-center">
             <h1 class="text-5xl font-bold font-courgette">Voter</h1>
             <p class="text-xl py-2">
-                Simple and easy to use polling application. Secured with the blockchain technology. Create and validate your own polls and share them with your friends.
+                Simple and easy to use polling application. Secured with the blockchain technology. Create and validate and watch live polls and share them with your friends.
             </p>
             <div class="flex flex-wrap justify-center gap-2" v-if="!connection.isAuthenticated">
                 <RouterLink class="btn btn-primary text-xl m-1" to="/login">
