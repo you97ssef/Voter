@@ -26,6 +26,11 @@
                     </div>
                 </div>
             </div>
+            <div v-if="poll.finished_at !== null">
+                <p class="text-sm">Finished</p>
+                <h3 class="text-xl font-bold">{{ new Date(poll.finished_at).toLocaleString() }}</h3>
+            </div>
+
             <div class="card-actions justify-end">
                 <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn btn-accent">
                     <i class="fa-solid fa-check-to-slot text-lg"></i>    

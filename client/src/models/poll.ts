@@ -6,6 +6,7 @@ export interface Poll {
     description: string;
     user_id: number;
     private_code: string | null;
+    finished_at: string | null;
 }
 
 export interface PollWithOptions extends Poll {

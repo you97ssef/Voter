@@ -36,7 +36,7 @@ export default {
 
         http.interceptors.response.use(
             (response) => {
-                if (response.data?.message) {
+                if (response.data?.message && response.data?.message !== 'Ok') {
                     toast.addToast(response.data.message, 'success')
                 }
             
