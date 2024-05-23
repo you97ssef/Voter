@@ -158,7 +158,7 @@
             </div>
             <div class="flex flex-col gap-2">
                 <div class="card card-compact bg-primary text-secondary-content">
-                    <div class="card-body flex-row justify-between items-center">
+                    <div class="card-body flex-row justify-between items-center flex-wrap">
                         <div class="flex justify-center items-center font-bold gap-2"> 
                             <i class="fa-solid fa-link"></i>
                             {{ shareLink }}
