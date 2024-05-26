@@ -13,7 +13,7 @@ func main() {
 
 	server.Initialize("./environment.json")
 
-	repositories := repositories.FakeRepositories(server)
+	repositories := repositories.NewRepositories(server)
 
 	controllers := &controllers.Controller{
 		Server: server,

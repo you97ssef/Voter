@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"strconv"
+	"voter/api/core/services"
 	"voter/api/core/utils"
 	"voter/api/models"
 )
@@ -12,6 +13,121 @@ type OptionRepo interface {
 	GetByPolls(polls []*models.Poll) ([]*models.Option, error)
 	GetById(id int) (*models.Option, error)
 	All() ([]*models.Option, error)
+}
+
+type OptionRepoImpl struct {
+	service *services.DBService
+}
+
+func ensureOptionsTableExists(s *services.DBService) {
+	s.Execute(`CREATE TABLE IF NOT EXISTS options (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		description TEXT NOT NULL,
+		poll_id INTEGER NOT NULL,
+		FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE
+	)`)
+}
+
+func NewOptionRepo(service *services.DBService) *OptionRepoImpl {
+	ensureOptionsTableExists(service)
+
+	return &OptionRepoImpl{
+		service: service,
+	}
+}
+
+func (r *OptionRepoImpl) BulkCreate(options []*models.Option) error {
+	query := "INSERT INTO options (description, poll_id) VALUES "
+	args := []interface{}{}
+
+	for _, option := range options {
+		query += "(?, ?),"
+		args = append(args, option.Description, option.PollId)
+	}
+
+	query = query[:len(query)-1]
+
+	_, err := r.service.Execute(query, args...)
+
+	return err
+}
+
+func (r *OptionRepoImpl) BulkDelete(pollId int) error {
+	_, err := r.service.Execute("DELETE FROM options WHERE poll_id = ?", pollId)
+
+	return err
+}
+
+func (r *OptionRepoImpl) GetByPolls(polls []*models.Poll) ([]*models.Option, error) {
+	var options []*models.Option
+	
+	for _, poll := range polls {
+		rows, err := r.service.Select("SELECT * FROM options WHERE poll_id = ?", poll.Id)
+		if err != nil {
+			return nil, err
+		}
+		
+		defer rows.Close()
+		for rows.Next() {
+			option := &models.Option{}
+
+			err = rows.Scan(&option.Id, &option.Description, &option.PollId)
+
+			if err != nil {
+				return nil, err
+			}
+
+			options = append(options, option)
+		}
+	}
+
+	return options, nil
+}
+
+func (r *OptionRepoImpl) GetById(id int) (*models.Option, error) {
+	rows, err := r.service.Select("SELECT * FROM options WHERE id = ?", id)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	if rows.Next() {
+		option := &models.Option{}
+	
+		err = rows.Scan(&option.Id, &option.Description, &option.PollId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return option, nil
+	}
+
+	return nil, nil
+}
+
+func (r *OptionRepoImpl) All() ([]*models.Option, error) {
+	rows, err := r.service.Select("SELECT * FROM options")
+	if err != nil {
+		return nil, err
+	}
+
+	var options []*models.Option
+	
+	defer rows.Close()
+	for rows.Next() {
+		option := &models.Option{}
+
+		err = rows.Scan(&option.Id, &option.Description, &option.PollId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		options = append(options, option)
+	}
+
+	return options, nil
 }
 
 type FakeOptionRepo struct {
