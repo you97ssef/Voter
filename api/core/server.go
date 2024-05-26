@@ -18,6 +18,7 @@ type Server struct {
 	Hasher     *services.Hasher
 	Jwt        *services.Jwt
 	Globals    map[string]interface{}
+	DatabaseService *services.DBService
 }
 
 func (s *Server) Initialize(envFile string) {
@@ -30,8 +31,13 @@ func (s *Server) Initialize(envFile string) {
 	s.setupMailer(environment)
 	s.setupHasher(environment)
 	s.setupJwt(environment)
+	s.setupDatabase()
 	s.checkSetup()
 	s.setupRouter()
+}
+
+func (s *Server) setupDatabase() {
+	s.DatabaseService = services.NewDBService(s.Config.DatabaseConnection)
 }
 
 func (s *Server) Run() {
