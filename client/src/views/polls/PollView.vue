@@ -103,7 +103,8 @@
     }
 
     onUnmounted(() => {
-        live.unsubscribe(`poll-${results.value!.poll.id}`)
+        if (!results.value) return
+        live.unsubscribe(`poll-${results.value.poll.id}`)
         live.disconnect()
     })
 
@@ -111,9 +112,9 @@
         live.publish(`poll-${results.value!.poll.id}`, JSON.stringify(vote))
     }
 
-    function deletePoll() {
+    async function deletePoll() {
         if (window.confirm('Are you sure you want to delete this poll?')) {
-            http.delete(`/polls/${results.value!.poll.id}`)
+            await http.delete(`/polls/${results.value!.poll.id}`)
             router.push({ name: 'my-polls' })
         }
     }
@@ -143,7 +144,7 @@
             <div class="text-center">
                 <h1 class="text-6xl mb-2 font-bold">
                     {{ results.poll.description }}
-                    <span class="loading loading-ring loading-lg text-error"></span>
+                    <span v-if="results.poll.finished_at === null" class="loading loading-ring loading-lg text-error"></span>
                 </h1>
                 <p class="text-xs" v-if="results.poll.finished_at !== null">Closed {{ new Date(results.poll.finished_at).toLocaleString() }}</p>
                 <p class="text-sm"><i class="fa-solid fa-users"></i> {{ results.count }} Voters</p>

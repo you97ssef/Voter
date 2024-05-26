@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import type { PollWithOptions } from '@/models/poll';
-    import { defineProps } from 'vue'
 
     defineProps<{
         poll: PollWithOptions

@@ -17,6 +17,7 @@
 
     onMounted(async () => {
         const response = await http.get<OkResponse<Polls>>('/public-polls')
+        if (response.data.data.polls === null || response.data.data.options === null) return
         polls = buildPollsWithOptions(response.data.data.polls, response.data.data.options)
         viewedPolls.value = polls
     })

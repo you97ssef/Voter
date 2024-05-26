@@ -23,8 +23,8 @@ export function buildPollsWithOptions(polls: Poll[], options: Option[]): PollWit
 }
 
 export interface Polls {
-    polls: Poll[];
-    options: Option[];
+    polls: Poll[] | null;
+    options: Option[] | null;
 }
 
 export interface PollResults {

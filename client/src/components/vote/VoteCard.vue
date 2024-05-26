@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import type { Vote } from '@/models/vote';
-    import { defineProps } from 'vue'
 
     defineProps<{
         vote: Vote
