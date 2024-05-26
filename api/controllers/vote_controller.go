@@ -20,6 +20,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(newVote.PollId)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -32,6 +33,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 	option, err := ctl.Repositories.OptionRepo.GetById(newVote.OptionId)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting option")
 		return
 	}
@@ -44,6 +46,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 	alreadyVoted, err := ctl.Repositories.VoteRepo.AlreadyVotedGuest(newVote.PollId, newVote.Guest)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error checking if already voted")
 		return
 	}
@@ -62,6 +65,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 	previousVote, err := ctl.Repositories.VoteRepo.GetLastVote(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting last vote")
 		return
 	}
@@ -73,6 +77,7 @@ func (ctl *Controller) GuestVote(c *gin.Context) {
 	vote.CompleteVote(previousVote)
 
 	if err := ctl.Repositories.VoteRepo.Save(vote); err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving vote")
 		return
 	}
@@ -91,6 +96,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(newVote.PollId)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -103,6 +109,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 	option, err := ctl.Repositories.OptionRepo.GetById(newVote.OptionId)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting option")
 		return
 	}
@@ -117,6 +124,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 	alreadyVoted, err := ctl.Repositories.VoteRepo.AlreadyVoted(newVote.PollId, int(userId))
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error checking if already voted")
 		return
 	}
@@ -137,6 +145,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 	previousVote, err := ctl.Repositories.VoteRepo.GetLastVote(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting last vote")
 		return
 	}
@@ -148,6 +157,7 @@ func (ctl *Controller) Vote(c *gin.Context) {
 	vote.CompleteVote(previousVote)
 
 	if err := ctl.Repositories.VoteRepo.Save(vote); err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving vote")
 		return
 	}
@@ -168,6 +178,7 @@ func (ctl *Controller) Votes(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -180,6 +191,7 @@ func (ctl *Controller) Votes(c *gin.Context) {
 	votes, err := ctl.Repositories.VoteRepo.GetByPoll(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting votes")
 		return
 	}
@@ -187,6 +199,7 @@ func (ctl *Controller) Votes(c *gin.Context) {
 	options, err := ctl.Repositories.OptionRepo.GetByPolls([]*models.Poll{poll})
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting options")
 		return
 	}
@@ -200,6 +213,7 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetByPrivateCode(code)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -212,6 +226,7 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 	votes, err := ctl.Repositories.VoteRepo.GetByPoll(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting votes")
 		return
 	}
@@ -219,6 +234,7 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 	options, err := ctl.Repositories.OptionRepo.GetByPolls([]*models.Poll{poll})
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting options")
 		return
 	}
@@ -239,6 +255,7 @@ func (ctl *Controller) ValidateVotes(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -251,6 +268,7 @@ func (ctl *Controller) ValidateVotes(c *gin.Context) {
 	votes, err := ctl.Repositories.VoteRepo.GetByPoll(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting votes")
 		return
 	}
@@ -261,7 +279,7 @@ func (ctl *Controller) ValidateVotes(c *gin.Context) {
 		var prevVote *models.Vote = &models.Vote{}
 
 		if index > 0 {
-			prevVote = votes[index - 1]
+			prevVote = votes[index-1]
 		}
 
 		var valid = vote.IsVoteValid(prevVote)
@@ -278,6 +296,7 @@ func (ctl *Controller) ValidateVotesByCode(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetByPrivateCode(code)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -290,6 +309,7 @@ func (ctl *Controller) ValidateVotesByCode(c *gin.Context) {
 	votes, err := ctl.Repositories.VoteRepo.GetByPoll(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting votes")
 		return
 	}
@@ -300,7 +320,7 @@ func (ctl *Controller) ValidateVotesByCode(c *gin.Context) {
 		var prevVote *models.Vote = &models.Vote{}
 
 		if index > 0 {
-			prevVote = votes[index - 1]
+			prevVote = votes[index-1]
 		}
 
 		var valid = vote.IsVoteValid(prevVote)

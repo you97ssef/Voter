@@ -20,6 +20,7 @@ func (ctl *Controller) Login(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(login.UsernameOrEmail)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting user")
 		return
 	}
@@ -37,6 +38,7 @@ func (ctl *Controller) Login(c *gin.Context) {
 	jwt, err := ctl.prepareToken(user)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error generating token")
 		return
 	}
@@ -46,10 +48,10 @@ func (ctl *Controller) Login(c *gin.Context) {
 
 func (ctl *Controller) prepareToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
-		"id": user.Id,
-		"name": user.Name,
-		"username": user.Username,
-		"email": user.Email,
+		"id":          user.Id,
+		"name":        user.Name,
+		"username":    user.Username,
+		"email":       user.Email,
 		"verified_at": user.VerifiedAt,
 	}
 
@@ -67,6 +69,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(register.Username)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error checking username")
 		return
 	}
@@ -79,6 +82,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	user, err = ctl.Repositories.UserRepo.GetByUsernameOrEmail(register.Email)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error checking email")
 		return
 	}
@@ -91,6 +95,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	password, err := ctl.Server.Hasher.HashPassword(register.Password)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error hashing password")
 		return
 	}
@@ -105,6 +110,7 @@ func (ctl *Controller) Register(c *gin.Context) {
 	err = ctl.Repositories.UserRepo.Save(user)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving user")
 		return
 	}
@@ -112,13 +118,15 @@ func (ctl *Controller) Register(c *gin.Context) {
 	err = ctl.sendVerification(user.Email)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error sending verification email")
 		return
 	}
 
 	token, err := ctl.prepareToken(user)
-	
+
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error generating token")
 		return
 	}
@@ -146,7 +154,7 @@ func (ctl *Controller) sendVerification(email string) error {
 	return ctl.Server.Mailer.SendEmail(
 		to,
 		"Verify your email",
-		"Click the link below to verify your email: <a href='" + link + "'>" + link + "</a>",
+		"Click the link below to verify your email: <a href='"+link+"'>"+link+"</a>",
 	)
 }
 
@@ -165,6 +173,7 @@ func (ctl *Controller) Verify(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(email)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting account by email")
 		return
 	}
@@ -180,6 +189,7 @@ func (ctl *Controller) Verify(c *gin.Context) {
 	err = ctl.Repositories.UserRepo.Save(user)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving account")
 		return
 	}
@@ -187,6 +197,7 @@ func (ctl *Controller) Verify(c *gin.Context) {
 	newToken, err := ctl.prepareToken(user)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error generating token")
 		return
 	}
@@ -205,6 +216,7 @@ func (ctl *Controller) ResendVerification(c *gin.Context) {
 	user, err := ctl.Repositories.UserRepo.GetByUsernameOrEmail(email)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting account by email")
 		return
 	}
@@ -217,6 +229,7 @@ func (ctl *Controller) ResendVerification(c *gin.Context) {
 	err = ctl.sendVerification(user.Email)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error sending verification email")
 		return
 	}

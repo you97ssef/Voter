@@ -34,6 +34,7 @@ func (ctl *Controller) CreatePoll(c *gin.Context) {
 	err := ctl.Repositories.PollRepo.Save(&poll)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving poll")
 		return
 	}
@@ -47,6 +48,7 @@ func (ctl *Controller) CreatePoll(c *gin.Context) {
 	err = ctl.Repositories.OptionRepo.BulkCreate(options)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error saving options")
 		return
 	}
@@ -64,6 +66,7 @@ func (ctl *Controller) MyPolls(c *gin.Context) {
 	polls, err := ctl.Repositories.PollRepo.GetByCreator(int(userId))
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting polls")
 		return
 	}
@@ -71,6 +74,7 @@ func (ctl *Controller) MyPolls(c *gin.Context) {
 	options, err := ctl.Repositories.OptionRepo.GetByPolls(polls)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting options")
 		return
 	}
@@ -91,6 +95,7 @@ func (ctl *Controller) DeletePoll(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -110,6 +115,7 @@ func (ctl *Controller) DeletePoll(c *gin.Context) {
 	err = ctl.Repositories.OptionRepo.BulkDelete(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error deleting options")
 		return
 	}
@@ -117,6 +123,7 @@ func (ctl *Controller) DeletePoll(c *gin.Context) {
 	err = ctl.Repositories.PollRepo.Delete(poll.Id)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error deleting poll")
 		return
 	}
@@ -128,6 +135,7 @@ func (ctl *Controller) PublicPolls(c *gin.Context) {
 	polls, err := ctl.Repositories.PollRepo.GetPublic()
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting polls")
 		return
 	}
@@ -135,6 +143,7 @@ func (ctl *Controller) PublicPolls(c *gin.Context) {
 	options, err := ctl.Repositories.OptionRepo.GetByPolls(polls)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting options")
 		return
 	}
@@ -155,6 +164,7 @@ func (ctl *Controller) FinishPoll(c *gin.Context) {
 	poll, err := ctl.Repositories.PollRepo.GetById(idInt)
 
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error getting poll")
 		return
 	}
@@ -170,13 +180,14 @@ func (ctl *Controller) FinishPoll(c *gin.Context) {
 		Forbidden(c, "You are not the creator of this poll")
 		return
 	}
-	
+
 	now := time.Now()
 	poll.FinishedAt = &now
 
 	err = ctl.Repositories.PollRepo.Save(poll)
-	
+
 	if err != nil {
+		ctl.Server.Logger.Alert(err)
 		Error(c, err, "Error finishing poll")
 		return
 	}
