@@ -14,6 +14,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(http, process.env.NODE_ENV === 'production' ? 'https://api.voter.bahi.ovh' : 'http://localhost:8888')
-app.use(live, "ws://broker.emqx.io:8083/mqtt", "voterapp/")
+app.use(live, "wss://broker.emqx.io:8084/mqtt", "voterapp/")
 
 app.mount('#app')
