@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
     import Loading from './components/Loading.vue'
     import Toast from './components/Toast.vue'
     import Header from './components/Header.vue'
