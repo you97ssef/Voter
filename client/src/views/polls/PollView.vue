@@ -22,9 +22,9 @@
 
     const alreadyVoted = computed(() => {
         return connection.isAuthenticated ? 
-            results.value!.votes.some(v => v.user_id === connection.user.id) : 
+            results.value!.votes.some(v => v.user === connection.user.name) : 
             connection.guestUsername ? 
-                results.value!.votes.some(v => v.guest === connection.guestUsername) : 
+                results.value!.votes.some(v => v.user === connection.guestUsername) : 
                 false    
     })
 
@@ -208,7 +208,7 @@
             </div>
         </div>
         <div class="flex flex-wrap justify-center gap-4">
-            <VoteCard v-for="vote in results.votes" :key="vote.id" :vote="vote" />
+            <VoteCard v-for="vote in results.votes" :key="vote.id" :vote="vote" :options="results.options" />
         </div>
     </div>
 </template>

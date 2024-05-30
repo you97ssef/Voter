@@ -1,13 +1,9 @@
 export interface Vote {
     id: number;
-    user_id: number;
+    is_guest: boolean;
+    user: string;
     option_id: number;
-    guest: string | null;
-    poll_id: number;
-    
     timestamp: number;
-    hash: string;
-    prev_hash: string;
 
     valid: boolean | undefined;
 }
