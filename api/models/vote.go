@@ -54,3 +54,11 @@ func (v *Vote) CompleteVote(previous *Vote) {
 	
 	v.Hash = v.calculateHash()
 }
+
+type VotePoll struct {
+	Id        int    `json:"id"`
+	IsGuest   bool   `json:"is_guest"`
+	User      string `json:"user"`
+	OptionId  int    `json:"option_id"`
+	Timestamp int64  `json:"timestamp"`
+}

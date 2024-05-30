@@ -9,6 +9,7 @@ import (
 type VoteRepo interface {
 	Save(vote *models.Vote) error
 	GetByPoll(pollId int) ([]*models.Vote, error)
+	GetVotersByPoll(pollId int) ([]*models.VotePoll, error)
 	AlreadyVoted(pollId int, userId int) (bool, error)
 	AlreadyVotedGuest(pollId int, guest string) (bool, error)
 	GetLastVote(pollId int) (*models.Vote, error)
@@ -78,6 +79,40 @@ func (r *VoteRepoImpl) GetByPoll(pollId int) ([]*models.Vote, error) {
 		var vote models.Vote
 
 		err := rows.Scan(&vote.Id, &vote.UserId, &vote.OptionId, &vote.PollId, &vote.Guest, &vote.Timestamp, &vote.Hash, &vote.PrevHash)
+		if err != nil {
+			return nil, err
+		}
+
+		votes = append(votes, &vote)
+	}
+
+	return votes, nil
+}
+
+func (r *VoteRepoImpl) GetVotersByPoll(pollId int) ([]*models.VotePoll, error) {
+	rows, err := r.service.Select(`
+		SELECT 
+			v.id, 
+			CASE WHEN v.guest IS NULL THEN false ELSE true END as is_guest,
+			CASE WHEN v.guest IS NULL THEN u.name ELSE v.guest END as user,
+			v.option_id,
+			v.timestamp
+		FROM votes v 
+		LEFT JOIN users u ON v.user_id = u.id
+		WHERE v.poll_id = ?;`, 
+		pollId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var votes []*models.VotePoll
+
+	defer rows.Close()
+	for rows.Next() {
+		var vote models.VotePoll
+
+		err := rows.Scan(&vote.Id, &vote.IsGuest, &vote.User, &vote.OptionId, &vote.Timestamp)
 		if err != nil {
 			return nil, err
 		}
@@ -202,6 +237,24 @@ func (r *FakeVoteRepo) GetByPoll(pollId int) ([]*models.Vote, error) {
 	for _, vote := range r.votes {
 		if vote.PollId == pollId {
 			votes = append(votes, vote)
+		}
+	}
+
+	return votes, nil
+}
+
+func (r *FakeVoteRepo) GetVotersByPoll(pollId int) ([]*models.VotePoll, error) {
+	var votes []*models.VotePoll
+
+	for _, vote := range r.votes {
+		if vote.PollId == pollId {
+			votes = append(votes, &models.VotePoll{
+				Id:       vote.Id,
+				IsGuest:  vote.Guest != nil,
+				User:     *vote.Guest,
+				OptionId: vote.OptionId,
+				Timestamp: vote.Timestamp,
+			})
 		}
 	}
 

@@ -188,7 +188,7 @@ func (ctl *Controller) Votes(c *gin.Context) {
 		return
 	}
 
-	votes, err := ctl.Repositories.VoteRepo.GetByPoll(idInt)
+	votes, err := ctl.Repositories.VoteRepo.GetVotersByPoll(idInt)
 
 	if err != nil {
 		ctl.Server.Logger.Alert(err)
@@ -223,7 +223,7 @@ func (ctl *Controller) VotesByCode(c *gin.Context) {
 		return
 	}
 
-	votes, err := ctl.Repositories.VoteRepo.GetByPoll(poll.Id)
+	votes, err := ctl.Repositories.VoteRepo.GetVotersByPoll(poll.Id)
 
 	if err != nil {
 		ctl.Server.Logger.Alert(err)
