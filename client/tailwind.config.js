@@ -14,18 +14,18 @@ export default {
         themes: [
             {
                 darko: {
-                    primary: '#F5F5F5',
-                    'primary-content': '#0A0A0A',
-                    secondary: '#A3A3A3',
-                    'secondary-content': '#0A0A0A',
+                    primary: '#000000',
+                    'primary-content': '#F5F5F5',
+                    secondary: '#0A0A0A',
+                    'secondary-content': '#F5F5F5',
                     accent: '#474747',
                     'accent-content': '#F5F5F5',
 
                     neutral: '#141414',
 
-                    'base-100': '#181818',
-                    'base-200': '#101010',
-                    'base-300': '#000000',
+                    'base-100': '#333333',
+                    'base-200': '#252525',
+                    'base-300': '#1F1F1F',
                     
                     info: '#3876BF',
                     'info-content': '#050A10',
@@ -36,7 +36,7 @@ export default {
                     error: '#ff0037',
                     'error-content': '#140004',
 
-                    '--rounded-box': '1.5rem',
+                    '--rounded-box': '2rem',
                     '--rounded-btn': '1rem',
                     '--rounded-badge': '2rem',
 
@@ -48,18 +48,18 @@ export default {
                     '--border-btn': '2px'
                 }, 
                 lighto: {
-                    primary: '#0A0A0A',
-                    'primary-content': '#F5F5F5',
-                    secondary: '#1F1F1F',
-                    'secondary-content': '#F5F5F5',
-                    accent: '#707070',
+                    primary: '#FFFFFF',
+                    'primary-content': '#0A0A0A',
+                    secondary: '#EBEBEB',
+                    'secondary-content': '#0A0A0A',
+                    accent: '#D6D6D6',
                     'accent-content': '#0A0A0A',
 
                     neutral: '#F5F5F5',
 
-                    'base-100': '#D6D6D6',
-                    'base-200': '#EBEBEB',
-                    'base-300': '#FFFFFF',
+                    'base-100': '#C2C2C2',
+                    'base-200': '#ADADAD',
+                    'base-300': '#999999',
                     
                     info: '#29588e',
                     'info-content': '#F5F5F5',
@@ -70,7 +70,7 @@ export default {
                     error: '#A30023',
                     'error-content': '#F5F5F5',
 
-                    '--rounded-box': '1.5rem',
+                    '--rounded-box': '2rem',
                     '--rounded-btn': '1rem',
                     '--rounded-badge': '2rem',
 

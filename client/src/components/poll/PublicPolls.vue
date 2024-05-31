@@ -25,7 +25,7 @@
 
 <template>
     <h1 class="text-center text-4xl py-4">Public Polls</h1>
-    <label class="input input-bordered flex items-center gap-2 mb-4">
+    <label class="input input-bordered flex items-center gap-2 mb-4 max-w-screen-sm mx-auto">
         <i class="fa-solid fa-magnifying-glass opacity-70"></i>
         <input type="text" class="grow" placeholder="Search..." v-model="search" />
     </label>

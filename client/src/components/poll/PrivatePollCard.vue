@@ -14,7 +14,7 @@
             <span class="indicator-item indicator-center badge badge-lg badge-primary">
                 <i class="fa-solid fa-lock"></i>
             </span>
-            <form class="card min-w-80 bg-primary-content shadow-xl h-full" @submit.prevent="viewPoll">
+            <form class="card min-w-80 bg-accent shadow-xl h-full" @submit.prevent="viewPoll">
                 <div class="card-body text-center">
                     <p class="text-xl">
                         Access private poll by entering it's private code.

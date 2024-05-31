@@ -27,7 +27,7 @@
 <template>
     <div class="flex align-center justify-center">
         <div class="card bg-base-200 text-neutral-content w-full max-w-4xl">
-            <form class="card-body" >
+            <form class="card-body" @submit.prevent="login">
                 <div class="text-center text-primary">
                     <i class="text-8xl fa-regular fa-circle-user"></i>
                     <p class="text-xl my-2">Login</p>
@@ -85,10 +85,8 @@
 
                 <div class="flex mt-5 justify-end">
                     <button 
-                        type="button" 
-                        class="btn btn-primary" 
-                        @click="login"
-                        :disabled="!credentials.username_or_email || !credentials.password"
+                        type="submit" 
+                        class="btn btn-primary"
                     >
                         <i class="fa-solid fa-arrow-right-to-bracket"></i>
                         Login

@@ -24,14 +24,14 @@
 </script>
 
 <template>
-    <h1 class="text-center text-4xl py-4">My Polls</h1>
-    <div class="flex justify-center pb-4">
+    <div class="flex justify-between max-w-screen-sm items-center mx-auto">
+        <h1 class="text-center text-4xl py-4">My Polls</h1>
         <RouterLink class="btn btn-success" to="/new-poll">
             <i class="fa-solid fa-plus"></i>
             New Poll
         </RouterLink>
     </div>
-    <label class="input input-bordered flex items-center gap-2 mb-4">
+    <label class="input input-bordered flex items-center gap-2 mb-4 max-w-screen-sm mx-auto">
         <i class="fa-solid fa-magnifying-glass opacity-70"></i>
         <input type="text" class="grow" placeholder="Search..." v-model="search" />
     </label>

@@ -164,7 +164,7 @@
                             <i class="fa-solid fa-link"></i>
                             {{ shareLink }}
                         </div>
-                        <div class="btn btn-sm btn-accent" @click="copyToClipboard">
+                        <div class="btn btn-sm btn-info" @click="copyToClipboard">
                             Share
                             <i class="fa-solid fa-share-nodes"></i>
                         </div>

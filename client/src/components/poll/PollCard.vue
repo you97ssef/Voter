@@ -35,11 +35,11 @@
             </div>
 
             <div class="card-actions justify-end">
-                <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn btn-accent">
+                <RouterLink v-if="poll.private_code" :to="{ name: 'private-poll', params: { code: poll.private_code }}" class="btn btn-info">
                     <i class="fa-solid fa-check-to-slot text-lg"></i>    
                     Show poll
                 </RouterLink>
-                <RouterLink v-else :to="{ name: 'poll', params: { id: poll.id }}" class="btn btn-accent">
+                <RouterLink v-else :to="{ name: 'poll', params: { id: poll.id }}" class="btn btn-info">
                     <i class="fa-solid fa-check-to-slot text-lg"></i>    
                     Show poll
                 </RouterLink>
