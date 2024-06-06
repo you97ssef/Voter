@@ -48,7 +48,10 @@
         </div>
     </div>
     <div class="divider font-courgette m-0 mx-4">Hi {{ connection.user?.name ?? (connection.guestUsername ?? 'Guest' ) }}</div>
-    <div class="flex justify-end px-4">
+    <div class="flex justify-between items-center px-4">
+        <p class="font-courgette text-sm">
+            Developed by <a href="https://bahi.ovh" target="_blank" class="link font-bold">Youssef Bahi</a>
+        </p>
         <button class="btn btn-square btn-primary btn-sm" @click="themeStore.toggleTheme">
             <i class="fa-solid fa-sun" v-if="themeStore.theme === DARK_THEME"></i>
             <i class="fa-solid fa-moon" v-else></i>

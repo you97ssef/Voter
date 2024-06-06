@@ -1,6 +1,7 @@
 services:
     voter-api:
         container_name: voter-api
+        restart: always
         build: ./api/.
         ports:
             - 9000:80
