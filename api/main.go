@@ -31,7 +31,7 @@ func main() {
 	routes.RegisterCors()
 	routes.RegisterRoutes(controllers, middleware)
 
-	server.SetGlobal("frontend_url", "https://voter.bahi.ovh")
+	server.SetGlobal("frontend_url", "https://voter.youssefbahi.com")
 
 	server.Run()
 }

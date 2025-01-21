@@ -6,7 +6,7 @@ Voter is a small, simple, and secure voting system designed to facilitate the cr
 
 ### Live Application
 
-You can access the live application at this URL: [https://voter.bahi.ovh](https://voter.bahi.ovh) and the API at this URL: [https://api.voter.bahi.ovh](https://api.voter.bahi.ovh).
+You can access the live application at this URL: [https://voter.youssefbahi.com](https://voter.youssefbahi.com) and the API at this URL: [https://api.voter.youssefbahi.com](https://api.voter.youssefbahi.com).
 
 ### Key Features
 
